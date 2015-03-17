@@ -3,6 +3,7 @@ package fs
 import (
 	"errors"
 	"io"
+	"io/ioutil"
 	"mime"
 	"os"
 	"path/filepath"
@@ -172,6 +173,15 @@ func (f *file) Rename(name string) error {
 	return err
 }
 
+func (f *file) ReadAll() ([]byte, error) {
+	return ioutil.ReadFile(f.Path())
+}
+
+// writes all to file with mode 0644
+func (f *file) WriteAll(b []byte) error {
+	return ioutil.WriteFile(f.Path(), b, os.FileMode(0644))
+}
+
 func (f *file) Move(dir string) error {
 	oldDir := f.dir
 	oldpath := f.Path()
@@ -183,7 +193,7 @@ func (f *file) Move(dir string) error {
 	return err
 }
 
-func (f *file) IO(flag int, perm os.FileMode) (*os.File, error) {
+func (f *file) OpenFile(flag int, perm os.FileMode) (*os.File, error) {
 	return os.OpenFile(f.Path(), flag, perm)
 }
 
